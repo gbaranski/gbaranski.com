@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>gbaranski</title>
+    <link>/</link>
+    <description>Recent content on gbaranski</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 12 May 2021 00:00:00 +0200</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>About</title>
+      <link>/about/</link>
+      <pubDate>Fri, 14 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/about/</guid>
+      <description>About me High school student. Open-source enthusiast, full stack experience with different kind of applications, my Github Profile.
+Contact Github: gbaranski
+Email: root@gbaranski.com</description>
+    </item>
+    
+    <item>
+      <title>Creating ncurses-like TUI Applications in Rust using Cursive</title>
+      <link>/posts/rust-tui/</link>
+      <pubDate>Wed, 12 May 2021 00:00:00 +0200</pubDate>
+      
+      <guid>/posts/rust-tui/</guid>
+      <description>Introduction A post describing creating a TUI application in Rust for the Houseflow project. It enables triggering events, like turning on lights, on connected IoT devices.
+Goal The goal of this project is to create something similar to ncspot, a Spotify client in CLI that uses the cursive.
+Getting started The first step is to initialize an empty project
+cargo new --bin rust-blog-tui This will create a directory with the given name and few files inside.</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/</guid>
+      <description>My projects All of them are available on my Github profile
+Houseflow Home automation platform, the project in which I put the most effort. Started it at the very beginning of the programming journey. This project involves a lot of different topics, like networking, electronics, mobile and web development, databases, devops, etc.
+Made using
+ Rust for high performance networking services with low memory footprint. My plan is to run that on cheap Raspberry Pi.</description>
+    </item>
+    
+  </channel>
+</rss>
