@@ -17,6 +17,333 @@
 Goal The goal of this project is to create something similar to ncspot, a Spotify client in CLI that uses the cursive.
 Getting started The first step is to initialize an empty project
 cargo new --bin rust-blog-tui This will create a directory with the given name and few files inside.</description>
+      <content>
+
+&lt;p&gt;
+  &lt;img src=&#34;/img/rust-tui/cover.png&#34;
+&lt;/p&gt;
+
+
+&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;A post describing creating a TUI application in Rust for the &lt;a href=&#34;/projects/#houseflow&#34;&gt;Houseflow&lt;/a&gt; project.
+It enables triggering events, like turning on lights, on connected IoT devices.&lt;/p&gt;
+&lt;h2 id=&#34;goal&#34;&gt;Goal&lt;/h2&gt;
+&lt;p&gt;The goal of this project is to create something similar to &lt;a href=&#34;https://github.com/hrkfdn/ncspot&#34;&gt;&lt;code&gt;ncspot&lt;/code&gt;&lt;/a&gt;, a Spotify client in CLI that uses the &lt;a href=&#34;https://github.com/gyscos/cursive&#34;&gt;&lt;code&gt;cursive&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/ncspot-screenshot.png&#34; alt=&#34;screenshot of running ncspot&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;getting-started&#34;&gt;Getting started&lt;/h2&gt;
+&lt;p&gt;The first step is to initialize an empty project&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;cargo new --bin rust-blog-tui
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This will create a directory with the given name and few files inside. Let&amp;rsquo;s start by adding &lt;a href=&#34;https://github.com/gyscos/cursive&#34;&gt;&lt;code&gt;cursive&lt;/code&gt;&lt;/a&gt; crate to dependencies, &lt;a href=&#34;#why-cursive&#34;&gt;here is why I chose it&lt;/a&gt;, and also &lt;a href=&#34;https://github.com/dtolnay/anyhow&#34;&gt;&lt;code&gt;anyhow&lt;/code&gt;&lt;/a&gt; for easier error handling. That&amp;rsquo;s how our &lt;code&gt;Cargo.toml&lt;/code&gt; shoud look like:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Cargo.toml&lt;/span&gt;
+
+[&lt;span style=&#34;color:#a6e22e&#34;&gt;package&lt;/span&gt;]
+&lt;span style=&#34;color:#a6e22e&#34;&gt;name&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;rust-blog-tui&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;version&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;0.1.0&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;edition&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2018&amp;#34;&lt;/span&gt;
+
+[&lt;span style=&#34;color:#a6e22e&#34;&gt;dependencies&lt;/span&gt;]
+&lt;span style=&#34;color:#a6e22e&#34;&gt;cursive&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;0.16&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;anyhow&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1.0&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;setting-up-ui&#34;&gt;Setting up UI&lt;/h3&gt;
+&lt;p&gt;The first step is showing a simple UI in our &lt;code&gt;main&lt;/code&gt; function inside &lt;code&gt;src/main.rs&lt;/code&gt; file&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// src/main.rs
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;use&lt;/span&gt; cursive::views::{Dialog, TextView};
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;() -&amp;gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;anyhow&lt;/span&gt;::Result&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;()&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; {
+    &lt;span style=&#34;color:#75715e&#34;&gt;// Creates the cursive root - required for every application.
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;mut&lt;/span&gt; siv &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; cursive::default();
+
+    &lt;span style=&#34;color:#75715e&#34;&gt;// Creates a dialog with a single &amp;#34;Quit&amp;#34; button
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    siv.add_layer(Dialog::around(TextView::new(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Hello Dialog!&amp;#34;&lt;/span&gt;))
+                         .title(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Cursive&amp;#34;&lt;/span&gt;)
+                         .button(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Quit&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;s&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; s.quit()));
+
+    &lt;span style=&#34;color:#75715e&#34;&gt;// Starts the event loop.
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    siv.run();
+
+    Ok(())
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Notice the return type of the &lt;code&gt;main&lt;/code&gt; function. We&amp;rsquo;re using &lt;code&gt;Result&lt;/code&gt; from the &lt;code&gt;anyhow&lt;/code&gt; crate, which will allow us to return &lt;code&gt;anyhow::Error&lt;/code&gt; directly from the &lt;code&gt;main&lt;/code&gt; function.&lt;/p&gt;
+&lt;p&gt;We can now test if it works by running&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;cargo run
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;What we should see is a screen with a simple Dialog.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/rust-tui/basic.png&#34; alt=&#34;screenshot of program with dialog on middle of the screen&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;defining-types-for-device&#34;&gt;Defining types for Device&lt;/h3&gt;
+&lt;p&gt;Let&amp;rsquo;s define some types which we will use for storing devices in memory&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// src/device.rs
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#e6db74&#34;&gt;/// Used to identify the device
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#[derive(Debug, Clone)]&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;struct&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;DeviceID&lt;/span&gt; {
+    inner: [&lt;span style=&#34;color:#66d9ef&#34;&gt;u8&lt;/span&gt;; &lt;span style=&#34;color:#ae81ff&#34;&gt;16&lt;/span&gt;],
+}
+
+&lt;span style=&#34;color:#75715e&#34;&gt;#[derive(Debug, Clone)]&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;struct&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Device&lt;/span&gt; {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; id: &lt;span style=&#34;color:#a6e22e&#34;&gt;DeviceID&lt;/span&gt;,
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And use them inside &lt;code&gt;main.rs&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// src/main.rs
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;mod&lt;/span&gt; device;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;use&lt;/span&gt; device::{Device, DeviceID};
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;generating-fake-devices&#34;&gt;Generating fake devices&lt;/h3&gt;
+&lt;p&gt;Since we&amp;rsquo;re not operating on real devices yet, we&amp;rsquo;ll generate fake devices. For the source of randomness, we&amp;rsquo;ll use &lt;a href=&#34;https://lib.rs/crates/rand&#34;&gt;&lt;code&gt;rand&lt;/code&gt;&lt;/a&gt;. Add the following line to our &lt;code&gt;Cargo.toml&lt;/code&gt; dependencies section&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Cargo.toml&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
+[&lt;span style=&#34;color:#a6e22e&#34;&gt;dependencies&lt;/span&gt;]
+&lt;span style=&#34;color:#a6e22e&#34;&gt;rand&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;0.8&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;random-device-ids&#34;&gt;Random Device IDs&lt;/h5&gt;
+&lt;p&gt;To generate a DeviceID using &lt;code&gt;rand&lt;/code&gt;, we&amp;rsquo;ll need to implement a Distribution for it&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// src/device.rs
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;use&lt;/span&gt; rand::distributions;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;impl&lt;/span&gt; distributions::Distribution&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;DeviceID&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; distributions::Standard {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;sample&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;R: &lt;span style=&#34;color:#a6e22e&#34;&gt;rand&lt;/span&gt;::Rng &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;?&lt;/span&gt;Sized&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt;(&lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;self, rng: &lt;span style=&#34;color:#66d9ef&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;mut&lt;/span&gt; R) -&amp;gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;DeviceID&lt;/span&gt; {
+        DeviceID { inner: &lt;span style=&#34;color:#a6e22e&#34;&gt;rng&lt;/span&gt;.gen() }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;iter-of-random-devices&#34;&gt;Iter of random devices&lt;/h5&gt;
+&lt;p&gt;Since we&amp;rsquo;ve got the function that generates random DeviceID, we can create a new function that returns an infinite Iterator of Devices with random DeviceID&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// src/device.rs
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#e6db74&#34;&gt;/// Creates a infinite Iterator of fake devices
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;pub&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;get_devices&lt;/span&gt;() -&amp;gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;impl&lt;/span&gt; Iterator&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;Item &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Device&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; {
+    std::iter::repeat_with(&lt;span style=&#34;color:#f92672&#34;&gt;||&lt;/span&gt; Device { id: &lt;span style=&#34;color:#a6e22e&#34;&gt;rand&lt;/span&gt;::random() })
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Import this function inside &lt;code&gt;main.rs&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// src/main.rs
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;use&lt;/span&gt; device::{Device, DeviceID, get_devices};
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;displaying-a-list-of-devices-to-the-user&#34;&gt;Displaying a list of devices to the user&lt;/h3&gt;
+&lt;p&gt;To present &lt;code&gt;DeviceID&lt;/code&gt; to the user, we need to implement the &lt;code&gt;std::fmt::Display&lt;/code&gt; trait. We&amp;rsquo;re going to use the hex encoding of inner bytes so that we need to add the &lt;a href=&#34;https://lib.rs/crates/hex&#34;&gt;&lt;code&gt;hex&lt;/code&gt;&lt;/a&gt; crate. Let&amp;rsquo;s add it to our &lt;code&gt;Cargo.toml&lt;/code&gt;&amp;rsquo;s dependencies section.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Cargo.toml&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
+[&lt;span style=&#34;color:#a6e22e&#34;&gt;dependencies&lt;/span&gt;]
+&lt;span style=&#34;color:#a6e22e&#34;&gt;hex&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;0.4&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And implementation of the &lt;code&gt;std::fmt::Display&lt;/code&gt; trait for the &lt;code&gt;DeviceID&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// src/device.rs
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;use&lt;/span&gt; std::fmt;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;impl&lt;/span&gt; fmt::Display &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; DeviceID {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;(&lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;self, f: &lt;span style=&#34;color:#66d9ef&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;mut&lt;/span&gt; fmt::Formatter&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;&amp;#39;_&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt;) -&amp;gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;::Result {
+        write&lt;span style=&#34;color:#f92672&#34;&gt;!&lt;/span&gt;(f, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;{}&amp;#34;&lt;/span&gt;, hex::encode(self.inner))
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;selectview&#34;&gt;SelectView&lt;/h5&gt;
+&lt;p&gt;To display a list of the devices on which we can click, we use &lt;a href=&#34;https://docs.rs/cursive/0.16.3/cursive/views/struct.SelectView.html&#34;&gt;&lt;code&gt;SelectView&lt;/code&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// src/main.rs
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;use&lt;/span&gt; cursive::{views::SelectView, Cursive, View};
+
+&lt;span style=&#34;color:#e6db74&#34;&gt;/// Returns SelectView whichs shows all available devices to the user
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;get_devices_select_view&lt;/span&gt;(
+    devices: Vec&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;Device&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt;,
+    submit_callback: &lt;span style=&#34;color:#a6e22e&#34;&gt;impl&lt;/span&gt; &amp;#39;static &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; Fn(&lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;mut&lt;/span&gt; Cursive, Device),
+) -&amp;gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;impl&lt;/span&gt; View {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; devices_cursive_iter &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; devices
+        .iter()
+        .enumerate()
+        .map(&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;(index, device)&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; (device.id.to_string(), index));
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;mut&lt;/span&gt; view &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; SelectView::new();
+    view.add_all(devices_cursive_iter);
+    view.set_on_submit(&lt;span style=&#34;color:#66d9ef&#34;&gt;move&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;siv, index&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; device &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; devices.get(&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;index).unwrap();
+        submit_callback(siv, device.clone())
+    });
+    view
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And now show it to the user in &lt;code&gt;main&lt;/code&gt; function&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// src/main.rs
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;() -&amp;gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;anyhow&lt;/span&gt;::Result&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;()&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; {
+    &lt;span style=&#34;color:#75715e&#34;&gt;// Creates the cursive root - required for every application.
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;mut&lt;/span&gt; siv &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; cursive::default();
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; devices &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; get_devices().take(&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;).collect();
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; devices_select_view &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; get_devices_select_view(devices, &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;siv, _device&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; siv.quit());
+
+    &lt;span style=&#34;color:#75715e&#34;&gt;// Create a dialog with devices select view
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    siv.add_layer(Dialog::around(devices_select_view));
+
+    &lt;span style=&#34;color:#75715e&#34;&gt;// Starts the event loop.
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    siv.run();
+
+    Ok(())
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The result is&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/rust-tui/selectview.png&#34; alt=&#34;screenshot of program with selectview&#34;&gt;&lt;/p&gt;
+&lt;p&gt;So far so good.&lt;/p&gt;
+&lt;h4 id=&#34;showing-a-dialog-to-the-user-on-submit-callback&#34;&gt;Showing a dialog to the user on submit callback&lt;/h4&gt;
+&lt;p&gt;Currently, selecting a particular device closes the program. We fix it by displaying a Dialog with the available options for the specific device.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// src/main.rs
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;submit_callback&lt;/span&gt;(siv: &lt;span style=&#34;color:#66d9ef&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;mut&lt;/span&gt; Cursive, device: &lt;span style=&#34;color:#a6e22e&#34;&gt;Device&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; text_view &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; TextView::new(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Select what to do with the device&amp;#34;&lt;/span&gt;);
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; dialog_title &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; format&lt;span style=&#34;color:#f92672&#34;&gt;!&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Selected device: {}&amp;#34;&lt;/span&gt;, device.id);
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; dialog &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Dialog::around(text_view)
+        .title(dialog_title)
+        .button(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Send Command&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;siv&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; siv.quit())
+        .button(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Cancel&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;siv&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; {
+            siv.pop_layer();
+        });
+
+    siv.add_layer(dialog);
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And use it in the &lt;code&gt;main&lt;/code&gt; function&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// src/main.rs
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;() -&amp;gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;anyhow&lt;/span&gt;::Result&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;()&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; {
+    &lt;span style=&#34;color:#75715e&#34;&gt;// Creates the cursive root - required for every application.
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;mut&lt;/span&gt; siv &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; cursive::default();
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; devices &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; get_devices().take(&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;).collect();
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; devices_select_view &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; get_devices_select_view(devices, submit_callback);
+
+    &lt;span style=&#34;color:#75715e&#34;&gt;// Create a dialog with devices select view
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    siv.add_layer(Dialog::around(devices_select_view));
+
+    &lt;span style=&#34;color:#75715e&#34;&gt;// Starts the event loop.
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    siv.run();
+
+    Ok(())
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now we can select a specific device, and the dialog shows up&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/rust-tui/dialog-popup.png&#34; alt=&#34;screenshot of program with selectview with dialog&#34;&gt;&lt;/p&gt;
+&lt;h4 id=&#34;sending-http-request-with-send-command-button&#34;&gt;Sending HTTP request with Send Command button&lt;/h4&gt;
+&lt;p&gt;Right now, the &amp;ldquo;Send Command&amp;rdquo; button closes our program. To fix that, we add a sending HTTP Request function. We start with adding the &lt;a href=&#34;https://lib.rs/crates/reqwest&#34;&gt;&lt;code&gt;reqwest&lt;/code&gt;&lt;/a&gt; and the &lt;a href=&#34;https://lib.rs/crates/cursive-async-view&#34;&gt;&lt;code&gt;cursive-async-view&lt;/code&gt;&lt;/a&gt; libraries for displaying a loader.&lt;/p&gt;
+&lt;p&gt;Add them to the dependencies section in our &lt;code&gt;Cargo.toml&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Cargo.toml&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
+[&lt;span style=&#34;color:#a6e22e&#34;&gt;dependencies&lt;/span&gt;]
+&lt;span style=&#34;color:#a6e22e&#34;&gt;cursive&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;async&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;view&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;0.5&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;reqwest&lt;/span&gt; = { &lt;span style=&#34;color:#a6e22e&#34;&gt;version&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;0.11&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;default&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;features&lt;/span&gt; = &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;features&lt;/span&gt; = [ &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;blocking&amp;#34;&lt;/span&gt; ] }
+&lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Add a function that will be called on the &amp;ldquo;Send Command&amp;rdquo; button press&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// src/main.rs
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;use&lt;/span&gt; cursive_async_view::AsyncView;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;send_command&lt;/span&gt;(siv: &lt;span style=&#34;color:#66d9ef&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;mut&lt;/span&gt; Cursive, _device: &lt;span style=&#34;color:#66d9ef&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;Device&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; client &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; reqwest::blocking::Client::new();
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; request &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; client.post(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;http://httpbin.org/delay/1&amp;#34;&lt;/span&gt;);
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; async_view &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; AsyncView::new_with_bg_creator(
+        siv,
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;move&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;||&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;match&lt;/span&gt; request.send() {
+            Ok(response) &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; Ok(response.status().to_string()),
+            Err(err) &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; Err(err.to_string()),
+        },
+        TextView::new,
+    );
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; async_view_width &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; siv.screen_size().x &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; async_view &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Dialog::around(async_view.with_width(async_view_width)).button(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Ok&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;siv&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; {
+        siv.pop_layer();
+    });
+    siv.add_layer(async_view);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Update the &lt;code&gt;submit_callback&lt;/code&gt; to call that function&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// src/main.rs
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;submit_callback&lt;/span&gt;(siv: &lt;span style=&#34;color:#66d9ef&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;mut&lt;/span&gt; Cursive, device: &lt;span style=&#34;color:#a6e22e&#34;&gt;Device&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; text_view &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; TextView::new(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Select what to do with the device&amp;#34;&lt;/span&gt;);
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; dialog_title &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; format&lt;span style=&#34;color:#f92672&#34;&gt;!&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Selected device: {}&amp;#34;&lt;/span&gt;, device.id);
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; dialog &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Dialog::around(text_view)
+        .title(dialog_title)
+        .button(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Send Command&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#66d9ef&#34;&gt;move&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;siv&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; send_command(siv, &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;device))
+        .button(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Cancel&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;siv&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; {
+            siv.pop_layer();
+        });
+
+    siv.add_layer(dialog);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;/img/rust-tui/send-http-request.gif&#34; alt=&#34;gif of program sending http request&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;fixing-the-movement&#34;&gt;Fixing the movement&lt;/h2&gt;
+&lt;p&gt;Currently, we need to use arrow keys for the navigation, which is quite inconvenient. Let&amp;rsquo;s add the h/j/k/l navigation——just like in Vim.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// src/main.rs
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;use&lt;/span&gt; cursive::{
+    event::EventResult,
+    views::{OnEventView, SelectView},
+    Cursive, View,
+};
+
+&lt;span style=&#34;color:#e6db74&#34;&gt;/// Returns SelectView whichs shows all available devices to user
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;get_devices_select_view&lt;/span&gt;(
+    devices: Vec&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;Device&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt;,
+    submit_callback: &lt;span style=&#34;color:#a6e22e&#34;&gt;impl&lt;/span&gt; &amp;#39;static &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; Fn(&lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;mut&lt;/span&gt; Cursive, Device),
+) -&amp;gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;impl&lt;/span&gt; View {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; devices_cursive_iter &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; devices
+        .iter()
+        .enumerate()
+        .map(&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;(index, device)&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; (device.id.to_string(), index));
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;mut&lt;/span&gt; view &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; SelectView::new();
+    view.add_all(devices_cursive_iter);
+    view.set_on_submit(&lt;span style=&#34;color:#66d9ef&#34;&gt;move&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;siv, index&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; device &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; devices.get(&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;index).unwrap();
+        submit_callback(siv, device.clone())
+    });
+    OnEventView::new(view)
+        .on_pre_event_inner(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;k&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;siv, _&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; {
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; cb &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; siv.select_up(&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;); &lt;span style=&#34;color:#75715e&#34;&gt;// Move up
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;            Some(EventResult::Consumed(Some(cb)))
+        })
+        .on_pre_event_inner(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;j&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;siv, _&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; {
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; cb &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; siv.select_down(&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;); &lt;span style=&#34;color:#75715e&#34;&gt;// Move down
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;            Some(EventResult::Consumed(Some(cb)))
+        })
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Also inside the Dialogs&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-rust&#34; data-lang=&#34;rust&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;use&lt;/span&gt; cursive::{
+    direction::{Absolute, Direction},
+    event::{Event, EventTrigger},
+};
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;fn&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;submit_callback&lt;/span&gt;(siv: &lt;span style=&#34;color:#66d9ef&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;mut&lt;/span&gt; Cursive, device: &lt;span style=&#34;color:#a6e22e&#34;&gt;Device&lt;/span&gt;) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; text_view &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; TextView::new(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Select what to do with the device&amp;#34;&lt;/span&gt;);
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; dialog_title &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; format&lt;span style=&#34;color:#f92672&#34;&gt;!&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Selected device: {}&amp;#34;&lt;/span&gt;, device.id);
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; dialog &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Dialog::around(text_view)
+        .title(dialog_title)
+        .button(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Send Command&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#66d9ef&#34;&gt;move&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;siv&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; send_command(siv, &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;device))
+        .button(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Cancel&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;siv&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; {
+            siv.pop_layer();
+        });
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; dialog &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; OnEventView::new(dialog)
+        .on_pre_event_inner(
+            EventTrigger::none()
+                .or(Event::Char(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;h&amp;#39;&lt;/span&gt;))
+                .or(Event::Char(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;k&amp;#39;&lt;/span&gt;)),
+            &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;siv, _&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; {
+                siv.take_focus(Direction::Abs(Absolute::Left));
+                Some(EventResult::Consumed(None))
+            },
+        )
+        .on_pre_event_inner(
+            EventTrigger::none()
+                .or(Event::Char(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;l&amp;#39;&lt;/span&gt;))
+                .or(Event::Char(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;j&amp;#39;&lt;/span&gt;)),
+            &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;siv, _&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; {
+                siv.take_focus(Direction::Abs(Absolute::Right));
+                Some(EventResult::Consumed(None))
+            },
+        );
+
+    siv.add_layer(dialog);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The complete source code is available on the &lt;a href=&#34;https://github.com/gbaranski/houseflow/tree/881977b8606fe554c6dc5aed38d916ad7f0efab2/tui&#34;&gt;Github repo&lt;/a&gt; as a part of the &lt;a href=&#34;/projects#houseflow&#34;&gt;Houseflow&lt;/a&gt; project.&lt;/p&gt;
+&lt;h2 id=&#34;why-cursive&#34;&gt;Why cursive?&lt;/h2&gt;
+&lt;p&gt;I&amp;rsquo;ve chosen it over &lt;a href=&#34;https://github.com/fdehau/tui-rs&#34;&gt;&lt;code&gt;tui-rs&lt;/code&gt;&lt;/a&gt; because the &lt;code&gt;cursive&lt;/code&gt; provides a lot of nice built-in widgets and suits better to my use-case; you can check out the comparison made by &lt;code&gt;cursive&lt;/code&gt; &lt;a href=&#34;https://github.com/gyscos/cursive/wiki/Cursive-vs-tui%E2%80%90rs&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+</content>
     </item>
     
   </channel>
