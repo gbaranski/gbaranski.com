@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on gbaranski</title><link>/posts/</link><description>Recent content in Posts on gbaranski</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 17 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>GnuPG &amp; Password manager setup</title><link>/posts/password-managers/</link><pubDate>Mon, 17 May 2021 00:00:00 +0000</pubDate><guid>/posts/password-managers/</guid><description>Introduction I was looking for password manager for quite long time which will meet all following requirements
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on gbaranski</title><link>/posts/</link><description>Recent content in Posts on gbaranski</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 17 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>My setup &amp; thoughts about password managers</title><link>/posts/password-managers/</link><pubDate>Mon, 17 May 2021 00:00:00 +0000</pubDate><guid>/posts/password-managers/</guid><description>Introduction I was looking for password manager for quite long time which will meet all following requirements
 Open-source CLI/TUI application, mustn&amp;rsquo;t be written in any scripting languauge, I don&amp;rsquo;t want high startup time, I might use password manager in scripts and 0.5s startup time bottleneck is not a way to go. Android &amp;amp; Linux support Option for self-hosting Must be relatively easy to synchronize between multiple computers, must work on Linux and Android.</description><content>&lt;h1 id="introduction">Introduction&lt;/h1>
 &lt;p>I was looking for password manager for quite long time which will meet all following requirements&lt;/p>
 &lt;ol>
@@ -51,7 +51,8 @@ export GPG_TTY&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#6
 &lt;div class="highlight">&lt;pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-bash" data-lang="bash">&lt;span style="color:#75715e"># ~/.config/fish/config.fish&lt;/span>
 export GPG_TTY&lt;span style="color:#f92672">=(&lt;/span>tty&lt;span style="color:#f92672">)&lt;/span>
 &lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="git-repository">Git repository&lt;/h1>
-&lt;p>We need Git repository to store passwords, I store them in Github private repository, although it could be even self-hosted. Keep in mind that password database don&amp;rsquo;t need to be super secure, of course it will be better if it will be, but the password database encrypted with password you&amp;rsquo;ll use in GnuPG.&lt;/p>
+&lt;p>Git repository is required to store passwords, however gopass also &lt;a href="https://github.com/gopasspw/gopass/blob/master/docs/setup.md#storing-and-syncing-your-password-store-with-google-drive--dropbox--syncthing--etc">supports&lt;/a> other ways to store passwords, but Git Repo seems best option for me, I store them in Github private repository, although it could be even self-hosted.&lt;/p>
+&lt;p>Keep in mind that password database is not the top secret, of course it will be better if it will be private, but the password database by itself will be encrypted with password.&lt;/p>
 &lt;p>Create Github repository using &lt;a href="https://github.com/cli/cli/">Github CLI&lt;/a>&lt;/p>
 &lt;div class="highlight">&lt;pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-bash" data-lang="bash">$ gh repo create pass
 ? Visibility Private
@@ -61,8 +62,8 @@ export GPG_TTY&lt;span style="color:#f92672">=(&lt;/span>tty&lt;span style="colo
 &lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="gpg-keys">GPG keys&lt;/h1>
 &lt;h2 id="gpg-primary-key">GPG Primary key&lt;/h2>
 &lt;p>&lt;em>&lt;strong>If you already have GPG Primary Key that you can use, you can skip this step&lt;/strong>&lt;/em>&lt;/p>
-&lt;p>Generate new GPG Key using &lt;code>gpg --full-generate-key --expert&lt;/code>, we&amp;rsquo;re using RSA because I&amp;rsquo;m not sure about ECC keys compatibility.&lt;/p>
-&lt;p>The primary key won&amp;rsquo;t be able to encrypt/sign, since we&amp;rsquo;ll have sub-keys for that, primary key will be used only to create new sub-keys.&lt;/p>
+&lt;p>Generate new GPG Key using &lt;code>gpg --full-generate-key --expert&lt;/code>, in this example we&amp;rsquo;re using RSA because I&amp;rsquo;m not sure about ECC keys compatibility.&lt;/p>
+&lt;p>The primary key won&amp;rsquo;t be able to encrypt/sign, there will have sub-keys for that, primary key will be used only for creating new sub-keys if needed, however for password managament purposes we&amp;rsquo;re going to use only one sub-key for all computers.&lt;/p>
 &lt;pre>&lt;code class="language-none" data-lang="none">$ gpg --full-generate-key --expert
 gpg (GnuPG) 2.2.27; Copyright (C) 2021 Free Software Foundation, Inc.
 This is free software: you are free to change and redistribute it.
@@ -215,7 +216,7 @@ pub rsa4096/0x2B0DFED5C9433443 2021-05-17 [C]
 226CDFD0B2C81A32E2C3DBEF2B0DFED5C9433443
 uid [ultimate] Grzegorz Baranski &amp;lt;root@gbaranski.com&amp;gt;
 sub rsa4096/0x1EF8CFF39BDF9EB4 2021-05-17 [E]
-&lt;/code>&lt;/pre>&lt;p>Sub-key has been created with Key ID &lt;code>0x1EF8CFF39BDF9EB4&lt;/code>, copy this ID, we will need it in the next step&lt;/p>
+&lt;/code>&lt;/pre>&lt;p>Sub-key has been created with Key ID &lt;code>0x1EF8CFF39BDF9EB4&lt;/code>, copy this ID, it will be needed in next step.&lt;/p>
 &lt;h5 id="check-if-encryptingdecrypting-works-properly">Check if encrypting/decrypting works properly&lt;/h5>
 &lt;pre>&lt;code class="language-none" data-lang="none">$ echo &amp;quot;hello there!&amp;quot; | gpg --homedir /media/usb/gnupg --recipient root@gbaranski.com --encrypt | gpg --homedir /media/usb/gnupg --decrypt
 gpg: encrypted with 4096-bit RSA key, ID 1EF8CFF39BDF9EB4, created 2021-05-17
