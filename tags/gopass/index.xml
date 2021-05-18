@@ -1,41 +1,41 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>gopass on gbaranski</title><link>/tags/gopass/</link><description>Recent content in gopass on gbaranski</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 17 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/tags/gopass/index.xml" rel="self" type="application/rss+xml"/><item><title>My setup &amp; thoughts about password managers</title><link>/posts/password-managers/</link><pubDate>Mon, 17 May 2021 00:00:00 +0000</pubDate><guid>/posts/password-managers/</guid><description>Introduction I was looking for password manager for quite long time which will meet all following requirements
-Open-source CLI/TUI application, mustn&amp;rsquo;t be written in any scripting languauge, I don&amp;rsquo;t want high startup time, I might use password manager in scripts and 0.5s startup time bottleneck is not a way to go. Android &amp;amp; Linux support Option for self-hosting Must be relatively easy to synchronize between multiple computers, must work on Linux and Android.</description><content>&lt;h1 id="introduction">Introduction&lt;/h1>
-&lt;p>I was looking for password manager for quite long time which will meet all following requirements&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>gopass on gbaranski</title><link>/tags/gopass/</link><description>Recent content in gopass on gbaranski</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 17 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/tags/gopass/index.xml" rel="self" type="application/rss+xml"/><item><title>Comparison of password managers and my setup</title><link>/posts/password-managers/</link><pubDate>Mon, 17 May 2021 00:00:00 +0000</pubDate><guid>/posts/password-managers/</guid><description>Introduction For a long time I was looking for a password manager which would meet all the following requirements:
+Open-source, CLI/TUI application must not be written in any scripting language. I don&amp;rsquo;t want slow startup time, I might use a password manager in scripts and 0.5s startup time is unacceptable. Android &amp;amp; Linux support, Option for self-hosting, Must be relatively easy to synchronize between multiple computers, must work on Linux and Android.</description><content>&lt;h1 id="introduction">Introduction&lt;/h1>
+&lt;p>For a long time I was looking for a password manager which would meet all the following requirements:&lt;/p>
 &lt;ol>
-&lt;li>Open-source&lt;/li>
-&lt;li>CLI/TUI application, mustn&amp;rsquo;t be written in any scripting languauge, I don&amp;rsquo;t want high startup time, I might use password manager in scripts and 0.5s startup time bottleneck is not a way to go.&lt;/li>
-&lt;li>Android &amp;amp; Linux support&lt;/li>
-&lt;li>Option for self-hosting&lt;/li>
+&lt;li>Open-source,&lt;/li>
+&lt;li>CLI/TUI application must not be written in any scripting language. I don&amp;rsquo;t want slow startup time, I might use a password manager in scripts and 0.5s startup time is unacceptable.&lt;/li>
+&lt;li>Android &amp;amp; Linux support,&lt;/li>
+&lt;li>Option for self-hosting,&lt;/li>
 &lt;li>Must be relatively easy to synchronize between multiple computers, must work on Linux and Android.&lt;/li>
 &lt;/ol>
 &lt;h2 id="what-ive-tried-so-far">What I&amp;rsquo;ve tried so far&lt;/h2>
 &lt;h3 id="bitwarden">Bitwarden&lt;/h3>
 &lt;ol>
 &lt;li>✅ Open-source, under GNU GPLv2 License.&lt;/li>
-&lt;li>❌ There is CLI app, but it&amp;rsquo;s written in JS which makes it horribly slow to stat up, launching &lt;code>bw --help&lt;/code> took 544ms, it&amp;rsquo;s a lot, just for comparsion &lt;a href="https://github.com/gopasspw/gopass">gopass&lt;/a> help page takes 66ms, retrieving specific password takes 200ms, huge difference.&lt;/li>
-&lt;li>✅ Android &amp;amp; Linux is fully supported, desktop app is written in Electron, which is slow and enabling Wayland&amp;rsquo;s fractional scaling makes everything blurred.&lt;/li>
-&lt;li>✅ Yes, via &lt;a href="https://github.com/dani-garcia/vaultwarden">vaultwarden&lt;/a>.&lt;/li>
-&lt;li>✅ Super simple to synchronize, probably easiest from all options I&amp;rsquo;ve mentioned here.&lt;/li>
+&lt;li>❌ There is CLI app, but it&amp;rsquo;s written in JS which makes it horribly slow to start up, launching &lt;code>bw --help&lt;/code> took 544ms; just for comparsion &lt;a href="https://github.com/gopasspw/gopass">gopass&lt;/a> help page takes 66ms, retrieving a specific password takes 200ms, huge difference.&lt;/li>
+&lt;li>✅ Android &amp;amp; Linux is fully supported, but the desktop app is written in Electron, which is slow; moreover, by enabling Wayland&amp;rsquo;s fractional scaling everything gets blurred.&lt;/li>
+&lt;li>✅ Self-hosting is possible via &lt;a href="https://github.com/dani-garcia/vaultwarden">vaultwarden&lt;/a>.&lt;/li>
+&lt;li>✅ Super simple to synchronize, probably the easiest of all other options mentioned here.&lt;/li>
 &lt;/ol>
 &lt;h3 id="keepassxc">KeepassXC&lt;/h3>
 &lt;ol>
 &lt;li>✅ Open-source, under GNU GPLv3 License.&lt;/li>
 &lt;li>✅ There is &lt;code>keepassxc-cli&lt;/code>.&lt;/li>
-&lt;li>✅ Android is supported by &lt;a href="https://www.keepassdx.com/">KeepassDX&lt;/a>, I personally don&amp;rsquo;t like the UI of app, Linux is supported&lt;/li>
+&lt;li>✅ Android is supported by &lt;a href="https://www.keepassdx.com/">KeepassDX&lt;/a>, I personally don&amp;rsquo;t like the UI of the app; Linux is supported.&lt;/li>
 &lt;li>✅ Self-host by storing database on computer.&lt;/li>
 &lt;li>❌ Complicated synchronization between Linux and Android.&lt;/li>
 &lt;/ol>
 &lt;h3 id="gopass">gopass&lt;/h3>
 &lt;ol>
 &lt;li>✅ Open-source, under MIT License.&lt;/li>
-&lt;li>✅ gopass by itself is CLI/TUI Application.&lt;/li>
-&lt;li>✅ Android is supported by &lt;a href="https://github.com/android-password-store/Android-Password-Store">Android-Password-Store&lt;/a>, application is very nice, looks best from all mobile applications mentioned here, Linux is supported.&lt;/li>
-&lt;li>✅ Self-host by storing Git repo on computer.&lt;/li>
-&lt;li>✅ As soon as you get GPG keys working, it&amp;rsquo;s super easy by pushing it to Github&lt;/li>
+&lt;li>✅ &lt;code>gopass&lt;/code> by itself is CLI/TUI Application.&lt;/li>
+&lt;li>✅ Android is supported by &lt;a href="https://github.com/android-password-store/Android-Password-Store">Android-Password-Store&lt;/a>, which is very nice, looks the best of all other apps mentioned here; Linux is supported.&lt;/li>
+&lt;li>✅ Self-host is possible by storing git repo on my computer.&lt;/li>
+&lt;li>✅ As soon as you get GPG keys working, synchronization is achieved by synchronizing git repository.&lt;/li>
 &lt;/ol>
 &lt;h3 id="verdict">Verdict&lt;/h3>
 &lt;p>As you can see, gopass meets all of my requirements.&lt;/p>
-&lt;p>This post is going to cover&lt;/p>
+&lt;p>The rest of the post covers&lt;/p>
 &lt;ul>
 &lt;li>GPG Keys for safe encrypting/decrypting stored keys.&lt;/li>
 &lt;li>Git repository to store passwords.&lt;/li>
