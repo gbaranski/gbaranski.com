@@ -317,13 +317,27 @@ Import gpg-subkey by selecting  and then &amp;ldquo;Import from File&amp;rdqu
 &lt;p>Open &lt;a href="https://github.com/android-password-store/Android-Password-Store">Android-Password-Store&lt;/a>, clone repository from Github and view your passwords.&lt;/p>
 &lt;h1 id="conclusions">Conclusions&lt;/h1>
 &lt;p>gopass is awesome password manager for people who like using things in terminal, for me setting up GPG keys correctly was the hardest thing.&lt;/p>
-&lt;p>I hope this article was useful and saved you some time. 👋&lt;/p></content></item><item><title>About</title><link>/about/</link><pubDate>Fri, 14 May 2021 00:00:00 +0000</pubDate><guid>/about/</guid><description>About me High school student. Open-source enthusiast, full stack experience with different kind of applications, my Github Profile.
+&lt;p>I hope this article was useful and saved you some time. 👋&lt;/p></content></item><item><title>About</title><link>/about/</link><pubDate>Fri, 14 May 2021 00:00:00 +0000</pubDate><guid>/about/</guid><description>About me High school student. Full-stack experience with different kind of applications. The vast majority of my time I spend working on Houseflow.
 Contact Github: gbaranski
-Email: root@gbaranski.com</description><content>&lt;h1 id="about-me">About me&lt;/h1>
-&lt;p>High school student. Open-source enthusiast, full stack experience with different kind of applications, my &lt;a href="https://github.com/gbaranski">Github Profile&lt;/a>.&lt;/p>
+Email: root@gbaranski.com
+Matrix ID: @gbaranski:matrix.org
+Keybase: gbaranski
+PGP Public Key My public key can be downloaded from https://gbaranski.com/pgp-public-key.txt
+pub rsa4096 2021-05-17 [C] 226C DFD0 B2C8 1A32 E2C3 DBEF 2B0D FED5 C943 3443 uid [ultimate] Grzegorz Baranski &amp;lt;root@gbaranski.com&amp;gt; sub rsa4096 2021-05-17 [E] sub rsa4096 2021-05-22 [SEA] [expires: 2022-05-22]</description><content>&lt;h1 id="about-me">About me&lt;/h1>
+&lt;p>High school student. Full-stack experience with &lt;a href="/projects">different kind of applications&lt;/a>. The vast majority of my time I spend working on &lt;a href="/projects#houseflow">Houseflow&lt;/a>.&lt;/p>
 &lt;h1 id="contact">Contact&lt;/h1>
 &lt;p>Github: &lt;a href="https://github.com/gbaranski">gbaranski&lt;/a>&lt;/p>
-&lt;p>Email: &lt;a href="mailto:root@gbaranski.com">root@gbaranski.com&lt;/a>&lt;/p></content></item><item><title>Creating ncurses-like TUI Applications in Rust using Cursive</title><link>/posts/rust-tui/</link><pubDate>Wed, 12 May 2021 00:00:00 +0000</pubDate><guid>/posts/rust-tui/</guid><description>Introduction A post describing creating a TUI application in Rust for the Houseflow project. It enables triggering events, like turning on lights, on connected IoT devices.
+&lt;p>Email: &lt;a href="mailto:root@gbaranski.com">root@gbaranski.com&lt;/a>&lt;/p>
+&lt;p>Matrix ID: @gbaranski:matrix.org&lt;/p>
+&lt;p>Keybase: &lt;a href="https://keybase.io/gbaranski">gbaranski&lt;/a>&lt;/p>
+&lt;h1 id="pgp-public-key">PGP Public Key&lt;/h1>
+&lt;p>My public key can be downloaded from &lt;a href="https://gbaranski.com/pgp-public-key.txt">https://gbaranski.com/pgp-public-key.txt&lt;/a>&lt;/p>
+&lt;pre>&lt;code class="language-none" data-lang="none">pub rsa4096 2021-05-17 [C]
+226C DFD0 B2C8 1A32 E2C3 DBEF 2B0D FED5 C943 3443
+uid [ultimate] Grzegorz Baranski &amp;lt;root@gbaranski.com&amp;gt;
+sub rsa4096 2021-05-17 [E]
+sub rsa4096 2021-05-22 [SEA] [expires: 2022-05-22]
+&lt;/code>&lt;/pre></content></item><item><title>Creating ncurses-like TUI Applications in Rust using Cursive</title><link>/posts/rust-tui/</link><pubDate>Wed, 12 May 2021 00:00:00 +0000</pubDate><guid>/posts/rust-tui/</guid><description>Introduction A post describing creating a TUI application in Rust for the Houseflow project. It enables triggering events, like turning on lights, on connected IoT devices.
 Goal The goal of this project is to create something similar to ncspot, a Spotify client in CLI that uses the cursive.
 Getting started The first step is to initialize an empty project
 cargo new --bin rust-blog-tui This will create a directory with the given name and few files inside.</description><content>
