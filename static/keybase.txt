@@ -1,0 +1,56 @@
+==================================================================
+https://keybase.io/gbaranski
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://gbaranski.com
+  * I am gbaranski (https://keybase.io/gbaranski) on keybase.
+  * I have a public key ASDdOTF8hPGTZ5YBE-TI9Lr6rRqOftHkKHN3ZM6GsJRj5go
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "012019f1c83bc28c77421552b66198f1cfb2c549a9ef4aca3eb313d7aca94b1aed2a0a",
+      "host": "keybase.io",
+      "kid": "0120dd39317c84f19367960113e4c8f4bafaad1a8e7ed1e428737764ce86b09463e60a",
+      "uid": "a6430c240d378487150581fa8377d119",
+      "username": "gbaranski"
+    },
+    "merkle_root": {
+      "ctime": 1621717180,
+      "hash": "c1feb7b6a03b61268eb8fe915b54804a704a67890171f39ab68361f8c39a027af68e05a997d0917f37e91fd5a294b35f786e02cba43423f6d9819267aad5dff4",
+      "hash_meta": "834267ded3a6b04c9448cf718c33e5ba11d471bc945e4c93e6e4423f03872ee3",
+      "seqno": 20017786
+    },
+    "service": {
+      "entropy": "GNsMRN2GV314GJ6luGs+4ITl",
+      "hostname": "gbaranski.com",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 2
+  },
+  "client": {
+    "name": "keybase.io go client",
+    "version": "5.6.1"
+  },
+  "ctime": 1621717204,
+  "expire_in": 504576000,
+  "prev": "0b8627ed77fa9f2188098693f40baeb2c7d118314a8a7e1d6e3a19d9af0dd0c0",
+  "seqno": 35,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+hKRib2R5hqhkZXRhY2hlZMOpaGFzaF90eXBlCqNrZXnEIwEg3TkxfITxk2eWARPkyPS6+q0ajn7R5Chzd2TOhrCUY+YKp3BheWxvYWTESpcCI8QgC4Yn7Xf6nyGICYaT9AuussfRGDFKin4dbjoZ2a8N0MDEIHjdQ07dpET5tMkJErZuxo5ijRAq8GgbV2TLvPvFwiXSAgHCo3NpZ8RAEq7gBcwtNmn7HvBK7c81BQ0e4BrJjmnesBood7BdJAnbcWP7PFRiMjkCf2SYYs0srwne30fnUbcx3DYZ5s/KAKhzaWdfdHlwZSCkaGFzaIKkdHlwZQildmFsdWXEIGWX434cVDgoXPuPuPKDDN52K2wYngerVw4WAiltg1mHo3RhZ80CAqd2ZXJzaW9uAQ==
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/gbaranski
+
+==================================================================
