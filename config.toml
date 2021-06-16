@@ -1,6 +1,6 @@
 baseURL = "/"
 
-theme = 'bearblog'
+theme = 'xmin'
 
 # Basic metadata configuration for your blog.
 title = "gbaranski's blog"
@@ -15,13 +15,9 @@ enableRobotsTXT = true
 disableKinds = ["taxonomy"]
 ignoreErrors = ["error-disable-taxonomy"]
 
-[markup]
-  [markup.highlight]
-    style = "monokai"
-
 [[menu.main]]
-name = "Posts"
-url = "/posts"
+name = "Home"
+url = "/"
 weight = 1
 
 [[menu.main]]

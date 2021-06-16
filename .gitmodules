@@ -7,3 +7,9 @@
 [submodule "themes/bearblog"]
 	path = themes/bearblog
 	url = https://github.com/janraasch/hugo-bearblog.git
+[submodule "themes/smol"]
+	path = themes/smol
+	url = https://github.com/colorchestra/smol
+[submodule "themes/xmin"]
+	path = themes/xmin
+	url = https://github.com/yihui/hugo-xmin

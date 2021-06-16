@@ -1,7 +1,6 @@
 +++
 title = "Comparison of password managers and my setup"
 date = 2021-05-17
-author = "gbaranski"
 tags = ["password-manager", "gopass"]
 description = """
 This post describes my password manager setup, use of [gopass](https://github.com/gopasspw/gopass) on PC, and [Android-Password-Store](https://github.com/android-password-store/Android-Password-Store) on Android.

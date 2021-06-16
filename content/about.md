@@ -1,7 +1,6 @@
 +++
 title = "About"
 date = "2021-05-14"
-author = "gbaranski"
 +++
 
 # About me

@@ -1,7 +1,6 @@
 +++
 title = "Creating ncurses-like TUI Applications in Rust using Cursive"
 date = 2021-05-12
-author = "gbaranski"
 tags = ["rust", "cursive", "tui", "houseflow"]
 description = """A post describing creating a TUI application in Rust for the [Houseflow](/projects/#houseflow) project. It enables triggering events, like turning on lights, on connected IoT devices. 
 """
