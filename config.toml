@@ -3,9 +3,9 @@ baseURL = "/"
 theme = 'xmin'
 
 # Basic metadata configuration for your blog.
-title = "gbaranski's blog"
+title = "gbaranski blog"
 author = "gbaranski"
-copyright = "Copyright © 2021, gbaranski"
+copyright = "Copyright © 2021, gbaranski <a href='https://github.com'>Github</a>"
 languageCode = "en-US"
 
 # Generate a nice robots.txt for SEO
@@ -33,6 +33,7 @@ weight = 3
 [params]
   # The "description" of your website. This is used in the meta data of your generated html.
   description = "gbaranski personal website and blog"
+  footer = "[Github](https://github.com/gbaranski)"
 
   # The path to your "favicon". This should be a square (at least 32px x 32px) png-file.
   # Hint: It's good practise to also put a "favicon.ico"-file into your "static"-folder.
@@ -53,3 +54,9 @@ weight = 3
   # for details. An example TOML config that uses [ISO
   # 8601](https://en.wikipedia.org/wiki/ISO_8601) format:
   # dateFormat = "2006-01-02"
+
+	
+[markup]
+  defaultMarkdownHandler = "goldmark"
+    [markup.goldmark.renderer]
+      unsafe = false

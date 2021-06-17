@@ -1,11 +1,7 @@
 +++
 title = "About"
-date = "2021-05-14"
 +++
 
-# About me
-
-High school student. Full-stack experience with [different kind of applications](/projects). The vast majority of my time I spend working on [Houseflow](/projects#houseflow).
 
 # Contact
 

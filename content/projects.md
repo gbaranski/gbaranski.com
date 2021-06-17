@@ -1,11 +1,6 @@
 +++
 title = "Projects"
-url = "/projects"
 +++
-
-# My projects
-
-All of them are available on my [Github](https://github.com/gbaranski) profile
 
 ## Houseflow 
 
