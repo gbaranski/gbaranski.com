@@ -159,8 +159,8 @@ It enables triggering events, like turning on lights, on connected IoT devices.<
 
 <span style=color:#75715e># ...</span>
 [<span style=color:#a6e22e>dependencies</span>]
-<span style=color:#a6e22e>cursive</span><span style=color:#960050;background-color:#1e0010>-</span><span style=color:#a6e22e>async</span><span style=color:#960050;background-color:#1e0010>-</span><span style=color:#a6e22e>view</span> = <span style=color:#e6db74>&#34;0.5&#34;</span>
-<span style=color:#a6e22e>reqwest</span> = { <span style=color:#a6e22e>version</span> = <span style=color:#e6db74>&#34;0.11&#34;</span>, <span style=color:#a6e22e>default</span><span style=color:#960050;background-color:#1e0010>-</span><span style=color:#a6e22e>features</span> = <span style=color:#66d9ef>false</span>, <span style=color:#a6e22e>features</span> = [ <span style=color:#e6db74>&#34;blocking&#34;</span> ] }
+<span style=color:#a6e22e>cursive-async-view</span> = <span style=color:#e6db74>&#34;0.5&#34;</span>
+<span style=color:#a6e22e>reqwest</span> = { <span style=color:#a6e22e>version</span> = <span style=color:#e6db74>&#34;0.11&#34;</span>, <span style=color:#a6e22e>default-features</span> = <span style=color:#66d9ef>false</span>, <span style=color:#a6e22e>features</span> = [ <span style=color:#e6db74>&#34;blocking&#34;</span> ] }
 <span style=color:#75715e># ...</span>
 </code></pre></div><p>Add a function that will be called on the &ldquo;Send Command&rdquo; button press</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#75715e>// src/main.rs
 </span><span style=color:#75715e></span>
